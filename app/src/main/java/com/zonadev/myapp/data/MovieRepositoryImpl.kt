@@ -1,7 +1,6 @@
 package com.zonadev.myapp.data
 
 import android.annotation.SuppressLint
-import com.zonadev.myapp.BuildConfig
 import com.zonadev.myapp.model.CastMember
 import com.zonadev.myapp.model.Movie
 import com.zonadev.myapp.network.ApiService

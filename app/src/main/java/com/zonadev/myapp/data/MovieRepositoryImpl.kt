@@ -36,5 +36,10 @@ class MovieRepositoryImpl(private val apiService: ApiService):MovieRepository {
         return response.cast
     }
 
+    override suspend fun searchMovies(query: String): List<Movie> {
+       val response = apiService.searchMovies(apiKey = Constants.API_KEY,query = query)
+        return response.movies
+    }
+
 
 }

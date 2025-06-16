@@ -12,6 +12,8 @@ import com.zonadev.myapp.model.CastMember
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+//@HiltViewModel
+//val viewModel: MoviewViewModelby viewModels()
 class MoviewViewModel(private val repository: MovieRepository) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<Movie>>(emptyList())
@@ -29,13 +31,16 @@ class MoviewViewModel(private val repository: MovieRepository) : ViewModel() {
     private val _movieCast = MutableStateFlow<List<CastMember>>(emptyList())
     val movieCast:StateFlow<List<CastMember>> = _movieCast
 
+    private val _filteredMovies = MutableStateFlow<List<Movie>>(emptyList())
+    val filteredMovies: StateFlow<List<Movie>> = _filteredMovies
+
 
     private val _errorMessage = MutableStateFlow<String>("null")
     val errorMessage: StateFlow<String?> = _errorMessage
 
     init {
         fetchPopularMovies()
-        fethchTrendingMovies()
+        fetchTrendingMovies()
     }
 
     fun fetchMovieCast(id:Int){
@@ -49,7 +54,6 @@ class MoviewViewModel(private val repository: MovieRepository) : ViewModel() {
                 Log.d("MovieCast","Error: ${error.message}")
             }
         }
-
     }
 
     fun fetchRecommendedMovies(id: Int){
@@ -79,7 +83,7 @@ class MoviewViewModel(private val repository: MovieRepository) : ViewModel() {
         }
     }
 
-    fun fethchTrendingMovies() {
+    fun fetchTrendingMovies() {
         viewModelScope.launch {
             val result = runCatching { repository.getTrendingMovies() }
             result.onSuccess {
@@ -96,6 +100,16 @@ class MoviewViewModel(private val repository: MovieRepository) : ViewModel() {
             result.onSuccess {
                 _movies.value = it
                 Log.d("MovieResponse", "Películas: $it") // Aquí sí verás la lista
+            }.onFailure { _errorMessage.value = it.message.toString() }
+        }
+    }
+
+    fun searchMovies(query: String){
+        viewModelScope.launch {
+            val result = runCatching { repository.searchMovies(query) }
+            result.onSuccess {
+                _filteredMovies.value = it
+                Log.d("searchMovies" ,"$it")
             }.onFailure { _errorMessage.value = it.message.toString() }
         }
     }

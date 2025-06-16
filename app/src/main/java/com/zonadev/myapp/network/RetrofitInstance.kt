@@ -17,7 +17,7 @@ object RetrofitInstance {
 
 }
 //Apiservice es la interfaz que define los endpoints de la API
-//El repositorio es el intermediario entre el api y el viewmodel
+//El repositorio(MovieRepositoryImpl) es el intermediario entre el api y el viewmodel
 /*Funciones:
 - LLamar a la api
 - Devolver los datos al ViewModel de forma limpia

@@ -1,19 +1,11 @@
 package com.zonadev.myapp.screen.navigation
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Downloading
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
@@ -65,11 +57,11 @@ fun AppNavigation(viewModel: MoviewViewModel) {
                         }
                     )
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Download, contentDescription = "Descargas") },
-                        label = { Text("Descargas") },
-                        selected = currentRoute == "downloads",
+                        icon = { Icon(Icons.Default.Favorite, contentDescription = "Favoritos") },
+                        label = { Text("Favoritos") },
+                        selected = currentRoute == "Favoritos",
                         onClick = {
-                            navController.navigate("downloads") {
+                            navController.navigate("Favoritos") {
                                 popUpTo(navController.graph.startDestinationId) { saveState = true }
                                 launchSingleTop = true
                                 restoreState = true
@@ -107,22 +99,22 @@ fun AppNavigation(viewModel: MoviewViewModel) {
 
         NavHost(
             navController = navController,
-            startDestination = "home",
+            startDestination = "Home",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("home") {
+            composable("Home") {
                 MovieScreen(
                     viewModel = viewModel,
                     navController = navController
                 )
             }
 
-            composable("downloads") {
+            composable("Favoritos") {
                 DownloadsScreen() // Aquí puedes poner tu pantalla real
             }
 
             composable("search") {
-                SearchScreen() // Aquí también
+                SearchScreen(viewModel = viewModel) // Aquí también
             }
 
             composable("account") {

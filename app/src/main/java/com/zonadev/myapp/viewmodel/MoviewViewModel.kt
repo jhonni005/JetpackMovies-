@@ -1,6 +1,7 @@
 package com.zonadev.myapp.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zonadev.myapp.data.MovieRepository
@@ -33,6 +34,9 @@ class MoviewViewModel(private val repository: MovieRepository) : ViewModel() {
 
     private val _filteredMovies = MutableStateFlow<List<Movie>>(emptyList())
     val filteredMovies: StateFlow<List<Movie>> = _filteredMovies
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
 
     private val _errorMessage = MutableStateFlow<String>("null")
@@ -106,8 +110,10 @@ class MoviewViewModel(private val repository: MovieRepository) : ViewModel() {
 
     fun searchMovies(query: String){
         viewModelScope.launch {
+            _isLoading.value = true
             val result = runCatching { repository.searchMovies(query) }
             result.onSuccess {
+                _isLoading.value = false
                 _filteredMovies.value = it
                 Log.d("searchMovies" ,"$it")
             }.onFailure { _errorMessage.value = it.message.toString() }

@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardDefaults.cardColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,7 +49,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.zonadev.myapp.viewmodel.MoviewViewModel
@@ -60,6 +60,7 @@ fun SearchScreen(viewModel: MoviewViewModel) {
 
     var text by remember { mutableStateOf("") }
     val movieList by viewModel.filteredMovies.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     val movieCategory = listOf(
         "Action",
@@ -124,38 +125,47 @@ fun SearchScreen(viewModel: MoviewViewModel) {
         }
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
-        items(movieList) { movie ->
-            Row (modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ){
-                movie.poster_path?.let { posterPath ->
-                    Image(
-                        painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/w342$posterPath"),
-                        contentDescription = movie.title,
-                        modifier = Modifier
-                            .height(100.dp)
-                            .width(200.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                        contentScale = ContentScale.Crop,
-                    )
+        if (isLoading) {
+            item {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
                 }
-                Column() {
-                    Text(movie.title)
-                    Text(movie.release_date)
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = "Rating",
-                            tint = Color.Yellow,
-                            modifier = Modifier.size(16.dp)
+            }
+        } else {
+            items(movieList) { movie ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    movie.poster_path?.let { posterPath ->
+                        Image(
+                            painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/w342$posterPath"),
+                            contentDescription = movie.title,
+                            modifier = Modifier
+                                .height(100.dp)
+                                .width(200.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop,
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = movie.vote_average.toString())
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
-                   // Text(movie.overview)
+                    Column() {
+                        Text(movie.title)
+                        Text(movie.release_date)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = "Rating",
+                                tint = Color.Yellow,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = movie.vote_average.toString())
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        // Text(movie.overview)
+                    }
                 }
             }
         }
